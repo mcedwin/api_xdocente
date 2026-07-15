@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusDocente API REST - Documentación</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #1a1a2e; line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; padding: 40px 0; text-align: center; }
+  header h1 { font-size: 2rem; margin-bottom: 8px; }
+  header p { opacity: .85; font-size: 1rem; }
+  h2 { font-size: 1.4rem; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 3px solid #0f3460; color: #16213e; }
+  h3 { font-size: 1.1rem; margin: 24px 0 10px; color: #0f3460; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+  .badge-get { background: #d4edda; color: #155724; }
+  .badge-post { background: #cce5ff; color: #004085; }
+  .badge-put { background: #fff3cd; color: #856404; }
+  .badge-delete { background: #f8d7da; color: #721c24; }
+  .endpoint { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 10px; padding: 14px 18px; border-left: 4px solid #0f3460; }
+  .endpoint .method-url { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .endpoint .method-url code { font-size: .9rem; background: #eef2f7; padding: 2px 8px; border-radius: 4px; }
+  .endpoint .desc { font-size: .9rem; color: #555; }
+  pre { background: #1e1e2e; color: #cdd6f4; padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: .82rem; margin: 8px 0 4px; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin: 12px 0; }
+  th, td { padding: 10px 14px; text-align: left; font-size: .88rem; }
+  th { background: #16213e; color: #fff; font-weight: 600; }
+  tr:not(:last-child) td { border-bottom: 1px solid #e9ecef; }
+  .section-subtitle { font-size: .9rem; color: #666; margin-bottom: 12px; }
+  .auth-note { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 12px 16px; font-size: .9rem; margin: 12px 0; }
+  footer { text-align: center; padding: 30px 0; color: #888; font-size: .85rem; margin-top: 40px; border-top: 1px solid #e9ecef; }
+  .collapse-btn { background: none; border: none; color: #0f3460; cursor: pointer; font-size: .82rem; padding: 2px 8px; border-radius: 4px; }
+  .collapse-btn:hover { background: #eef2f7; }
+  .group-title { font-weight: 600; color: #16213e; margin: 20px 0 6px; font-size: .95rem; }
+  .enum-table td:first-child { font-weight: 600; }
+  @media (max-width: 768px) { header h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>FocusDocente API REST</h1>
+    <p>Laravel 12 &middot; Sanctum Auth &middot; MySQL &middot; Firebase &middot; OpenAI</p>
+    <p style="margin-top:6px;font-size:.85rem;opacity:.7">73 endpoints &mdash; Versión 1.0</p>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="auth-note">
+  <strong>URL Base:</strong> <code>https://&lt;tu-dominio&gt;/api</code><br>
+  <strong>Autenticación:</strong> Laravel Sanctum (token). Envía el header <code>Authorization: Bearer &lt;token&gt;</code> en endpoints protegidos.
+</div>
+
+<!-- ==================== 1. AUTENTICACIÓN ==================== -->
+<h2>1. Autenticación (Públicos)</h2>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/register</code>
+  </div>
+  <div class="desc">Registrar un nuevo usuario</div>
+  <pre>{
+  "name": "Juan Pérez",
+  "email": "juan@ejemplo.com",
+  "password": "123456",
+  "password_confirmation": "123456"
+}</pre>
+  <div class="desc"><strong>Respuesta 201:</strong> <code>{ "token": "1|abc...", "user": { "id": "...", "name": "...", "email": "...", "avatar": null } }</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/login</code>
+  </div>
+  <div class="desc">Iniciar sesión con email y contraseña</div>
+  <pre>{
+  "email": "juan@ejemplo.com",
+  "password": "123456"
+}</pre>
+  <div class="desc"><strong>Respuesta 200:</strong> Misma estructura que register. <strong>Error 401:</strong> <code>{ "error": "Credenciales inválidas" }</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/auth/google</code>
+  </div>
+  <div class="desc">Iniciar sesión o registrarse con Google (también en <code>/api/login/google</code>)</div>
+  <pre>{ "id_token": "&lt;google-oauth-id-token&gt;" }</pre>
+</div>
+
+<h2>2. Sesión (Autenticados)</h2>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/logout</code>
+  </div>
+  <div class="desc">Cerrar sesión (revoca el token actual)</div>
+  <div class="desc"><strong>Respuesta:</strong> <code>{ "message": "Sesión cerrada" }</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-get">GET</span>
+    <code>/api/user</code>
+  </div>
+  <div class="desc">Obtener información del usuario autenticado</div>
+</div>
+
+<!-- ==================== 3. COURSES SYNC ==================== -->
+<h2>3. Cursos — Flutter Sync (UUID)</h2>
+<p class="section-subtitle">Endpoints diseñados para sincronización offline-first desde Flutter. Usan UUID como identificador.</p>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-get">GET</span>
+    <code>/api/courses</code>
+  </div>
+  <div class="desc">Obtener todos los cursos del usuario con datos anidados completos (estudiantes, unidades, sesiones, tareas, prácticas, participación, trabajos grupales, proyecto)</div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/courses/sync</code>
+  </div>
+  <div class="desc">Sincronización masiva: reemplaza todos los cursos (upsert por UUID, elimina los no incluidos)</div>
+  <pre>{
+  "courses": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Matemáticas 5to",
+      "description": "Curso de matemáticas",
+      "selectedUnitIndex": 0,
+      "settings": {
+        "maxTaskScore": 5,
+        "maxPracticeScore": 5,
+        "maxParticipation": 3,
+        "maxGroupWorkScore": 20,
+        "maxProjectScore": 5
+      },
+      "students": [
+        { "id": "uuid1", "name": "Ana López", "notes": null }
+      ],
+      "units": [
+        {
+          "id": "uuid2",
+          "name": "Unidad 1: Álgebra",
+          "sessions": [
+            {
+              "id": "uuid3",
+              "date": "2026-03-01",
+              "topic": "Ecuaciones",
+              "records": [
+                { "studentId": "uuid1", "attendance": "present", "observations": null }
+              ]
+            }
+          ],
+          "tasks": [
+            {
+              "id": "uuid4", "name": "Tarea 1", "date": "2026-03-05",
+              "scores": [ { "studentId": "uuid1", "score": 4.5 } ]
+            }
+          ],
+          "practices": [],
+          "participationItems": [],
+          "groupWorks": [
+            {
+              "id": "uuid5", "name": "TG1", "date": "2026-03-10",
+              "criteria": [ { "id": "uuid6", "name": "Contenido", "maxScore": 10 } ],
+              "groups": [
+                {
+                  "id": "uuid7", "name": "Grupo A",
+                  "studentIds": ["uuid1"],
+                  "criterionScores": { "uuid_criterio": 8.5 },
+                  "overrides": [
+                    { "studentId": "uuid1", "criterionScores": { "uuid_criterio": 9.0 } }
+                  ]
+                }
+              ]
+            }
+          ],
+          "project": {
+            "name": "Proyecto Final",
+            "criteria": [ { "id": "uuid8", "name": "Creatividad", "maxScore": 5 } ],
+            "scores": [
+              { "studentId": "uuid1", "criterionScores": { "uuid_criterio": 4.5 } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}</pre>
+  <div class="desc"><strong>Respuesta:</strong> <code>{ "message": "Cursos sincronizados" }</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/courses</code>
+  </div>
+  <div class="desc">Crear o actualizar un curso individual (upsert por UUID)</div>
+  <pre>{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Matemáticas 5to"
+}</pre>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-delete">DELETE</span>
+    <code>/api/courses/{id}</code>
+  </div>
+  <div class="desc">Eliminar un curso</div>
+  <div class="desc"><strong>Respuesta:</strong> <code>204 No Content</code></div>
+</div>
+
+<!-- ==================== 4. ALERTS SYNC ==================== -->
+<h2>4. Alertas — Flutter Sync (UUID)</h2>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-get">GET</span>
+    <code>/api/alerts</code>
+  </div>
+  <div class="desc">Obtener todas las alertas del usuario ordenadas por fecha descendente</div>
+  <div class="desc"><strong>Respuesta:</strong> <code>{ "data": [ { "id": "...", "studentId": "...", "studentName": "...", "courseName": "...", "courseId": "...", "type": "consecutiveAbsences", "description": "...", "date": "2026-03-01", "read": false } ] }</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/alerts/sync</code>
+  </div>
+  <div class="desc">Reemplazar todas las alertas del usuario (elimina existentes y recrea)</div>
+  <pre>{
+  "alerts": [
+    {
+      "id": "uuid-alerta",
+      "studentId": "uuid-estudiante",
+      "courseId": "uuid-curso",
+      "type": "consecutiveAbsences",
+      "description": "3 faltas consecutivas",
+      "date": "2026-03-01",
+      "read": false
+    }
+  ]
+}</pre>
+  <div class="desc"><strong>Tipos válidos:</strong> <code>consecutiveAbsences</code>, <code>performanceDecline</code>, <code>lowParticipation</code>, <code>missingTasks</code>, <code>multipleDifficulties</code></div>
+</div>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-put">PUT</span>
+    <code>/api/alerts/{id}/read</code>
+  </div>
+  <div class="desc">Marcar una alerta como leída</div>
+  <div class="desc"><strong>Respuesta:</strong> <code>{ "message": "Alerta marcada como leída" }</code></div>
+</div>
+
+<!-- ==================== 5. NOTIFICACIONES ==================== -->
+<h2>5. Notificaciones Push</h2>
+
+<div class="endpoint">
+  <div class="method-url">
+    <span class="badge badge-post">POST</span>
+    <code>/api/send-notification</code>
+  </div>
+  <div class="desc">Enviar notificación push vía Firebase Cloud Messaging</div>
+  <pre>{
+  "token": "fcm-device-token",
+  "title": "Nueva calificación",
+  "body": "María ha recibido 18/20 en su trabajo grupal"
+}</pre>
+  <div class="desc"><strong>Respuesta:</strong> <code>{ "status": "ok" }</code></div>
+</div>
+
+<!-- ==================== 6. CRUD ESPAÑOL ==================== -->
+<h2>6. CRUD Legacy (Español)</h2>
+<p class="section-subtitle">Endpoints RESTful tradicionales con nombres en español y route model binding.</p>
+
+<h3>6.1 Cursos</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/cursos</code></td><td>Listar cursos del usuario</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/cursos</code></td><td>Crear curso <code>{"nombre": "...", "descripcion": "..."}</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/cursos/{curso}</code></td><td>Ver curso con unidades y estudiantes</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/cursos/{curso}</code></td><td>Actualizar curso (nombre, descripción, índices, puntajes máximos)</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/cursos/{curso}</code></td><td>Eliminar curso → <code>204</code></td></tr>
+</table>
+
+<h3>6.2 Estudiantes</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/cursos/{curso}/estudiantes</code></td><td>Listar estudiantes de un curso</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/cursos/{curso}/estudiantes</code></td><td>Agregar estudiante <code>{"nombre": "...", "notas": [...]}</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/estudiantes/{estudiante}</code></td><td>Ver estudiante con asistencia, tareas, prácticas, participación y proyecto</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/estudiantes/{estudiante}</code></td><td>Actualizar estudiante</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/estudiantes/{estudiante}</code></td><td>Eliminar estudiante → <code>204</code></td></tr>
+</table>
+
+<h3>6.3 Unidades</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/cursos/{curso}/unidades</code></td><td>Listar unidades (ordenadas por campo <code>orden</code>)</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/cursos/{curso}/unidades</code></td><td>Crear unidad <code>{"nombre": "...", "orden": 0}</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}</code></td><td>Ver unidad con sesiones, tareas, prácticas, participación, trabajos grupales y proyecto</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/unidades/{unidad}</code></td><td>Actualizar unidad</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/unidades/{unidad}</code></td><td>Eliminar unidad → <code>204</code></td></tr>
+</table>
+
+<h3>6.4 Sesiones y Asistencia</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/sesiones</code></td><td>Listar sesiones (ordenadas por fecha)</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/sesiones</code></td><td>Crear sesión <code>{"fecha": "2026-03-01", "tema": "..."}</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/sesiones/{sesion}</code></td><td>Ver sesión con registros de asistencia</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/sesiones/{sesion}</code></td><td>Actualizar sesión</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/sesiones/{sesion}</code></td><td>Eliminar sesión → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/sesiones/{sesion}/asistencia</code></td><td>Obtener registros de asistencia de una sesión</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/sesiones/{sesion}/asistencia</code></td><td>Registrar asistencia masiva</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/asistencia/{registro}</code></td><td>Actualizar un registro de asistencia</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/asistencia/{registro}</code></td><td>Eliminar registro → <code>204</code></td></tr>
+</table>
+
+<p><strong>Registro masivo de asistencia:</strong></p>
+<pre>POST /api/sesiones/{sesion}/asistencia
+{
+  "registros": [
+    { "estudiante_id": 1, "asistencia": "presente", "observaciones": null },
+    { "estudiante_id": 2, "asistencia": "ausente", "observaciones": "Enfermo" }
+  ]
+}</pre>
+
+<h3>6.5 Tareas y Calificaciones</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/tareas</code></td><td>Listar tareas con calificaciones</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/tareas</code></td><td>Crear tarea <code>{"nombre": "...", "fecha": "..."}</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/tareas/{tarea}</code></td><td>Ver tarea con calificaciones</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/tareas/{tarea}</code></td><td>Actualizar tarea</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/tareas/{tarea}</code></td><td>Eliminar tarea → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/tareas/{tarea}/calificaciones</code></td><td>Upsert calificaciones de tarea (masivo)</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/calificaciones-tareas/{calificacion}</code></td><td>Actualizar una calificación</td></tr>
+</table>
+
+<pre>POST /api/tareas/{tarea}/calificaciones
+{
+  "calificaciones": [
+    { "estudiante_id": 1, "puntaje": 4.5 },
+    { "estudiante_id": 2, "puntaje": 3.0 }
+  ]
+}</pre>
+
+<h3>6.6 Prácticas y Calificaciones</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/practicas</code></td><td>Listar prácticas con calificaciones</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/practicas</code></td><td>Crear práctica</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/practicas/{practica}</code></td><td>Ver práctica con calificaciones</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/practicas/{practica}</code></td><td>Actualizar práctica</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/practicas/{practica}</code></td><td>Eliminar práctica → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/practicas/{practica}/calificaciones</code></td><td>Upsert calificaciones de práctica (masivo)</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/calificaciones-practicas/{calificacion}</code></td><td>Actualizar una calificación</td></tr>
+</table>
+
+<h3>6.7 Participación</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/participacion</code></td><td>Listar ítems de participación con calificaciones</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/participacion</code></td><td>Crear ítem de participación</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/participacion/{item}</code></td><td>Ver ítem con calificaciones</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/participacion/{item}</code></td><td>Actualizar ítem</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/participacion/{item}</code></td><td>Eliminar ítem → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/participacion/{item}/calificaciones</code></td><td>Upsert calificaciones de participación (masivo)</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/calificaciones-participacion/{calificacion}</code></td><td>Actualizar una calificación</td></tr>
+</table>
+
+<h3>6.8 Trabajos Grupales</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/trabajos-grupales</code></td><td>Listar trabajos grupales con criterios, grupos y puntajes</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/trabajos-grupales</code></td><td>Crear trabajo grupal</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/trabajos-grupales/{trabajo}</code></td><td>Ver trabajo grupal con toda la información anidada</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/trabajos-grupales/{trabajo}</code></td><td>Actualizar trabajo grupal</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/trabajos-grupales/{trabajo}</code></td><td>Eliminar trabajo grupal → <code>204</code></td></tr>
+</table>
+
+<h4>Criterios</h4>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/trabajos-grupales/{trabajo}/criterios</code></td><td>Listar criterios</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/trabajos-grupales/{trabajo}/criterios</code></td><td>Crear criterios masivamente</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/criterios-trabajo-grupal/{criterio}</code></td><td>Actualizar criterio</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/criterios-trabajo-grupal/{criterio}</code></td><td>Eliminar criterio → <code>204</code></td></tr>
+</table>
+
+<pre>POST /api/trabajos-grupales/{trabajo}/criterios
+{
+  "criterios": [
+    { "nombre": "Contenido", "puntaje_maximo": 10 },
+    { "nombre": "Presentación", "puntaje_maximo": 5 }
+  ]
+}</pre>
+
+<h4>Grupos</h4>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/trabajos-grupales/{trabajo}/grupos</code></td><td>Listar grupos con estudiantes</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/trabajos-grupales/{trabajo}/grupos</code></td><td>Crear grupo con estudiantes</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/grupos/{grupo}</code></td><td>Ver grupo con puntajes y ajustes individuales</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/grupos/{grupo}</code></td><td>Actualizar grupo (nombre y/o estudiantes)</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/grupos/{grupo}</code></td><td>Eliminar grupo → <code>204</code></td></tr>
+</table>
+
+<pre>POST /api/trabajos-grupales/{trabajo}/grupos
+{
+  "nombre": "Grupo A",
+  "estudiantes": [1, 2, 3]
+}</pre>
+
+<h4>Puntajes y Ajustes</h4>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/grupos/{grupo}/puntajes</code></td><td>Upsert puntajes por criterio para el grupo</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/puntajes-criterio-grupo/{puntaje}</code></td><td>Actualizar un puntaje</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/grupos/{grupo}/ajustes</code></td><td>Listar ajustes individuales</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/grupos/{grupo}/ajustes</code></td><td>Upsert ajustes individuales (masivo)</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/ajustes-individuales/{ajuste}</code></td><td>Actualizar un ajuste</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/ajustes-individuales/{ajuste}</code></td><td>Eliminar ajuste → <code>204</code></td></tr>
+</table>
+
+<pre>POST /api/grupos/{grupo}/puntajes
+{
+  "puntajes": [
+    { "criterio_id": 1, "puntaje": 8.5 },
+    { "criterio_id": 2, "puntaje": 4.0 }
+  ]
+}
+
+POST /api/grupos/{grupo}/ajustes
+{
+  "ajustes": [
+    { "estudiante_id": 1, "criterio_id": 1, "puntaje": 9.0 }
+  ]
+}</pre>
+
+<h3>6.9 Proyectos</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/unidades/{unidad}/proyectos</code></td><td>Listar proyectos con criterios y calificaciones</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/unidades/{unidad}/proyectos</code></td><td>Crear proyecto (nombre opcional, default: "Proyecto")</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/proyectos/{proyecto}</code></td><td>Ver proyecto con criterios y calificaciones</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/proyectos/{proyecto}</code></td><td>Actualizar proyecto</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/proyectos/{proyecto}</code></td><td>Eliminar proyecto → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/proyectos/{proyecto}/criterios</code></td><td>Listar criterios del proyecto</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/proyectos/{proyecto}/criterios</code></td><td>Crear criterios masivamente</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/criterios-proyecto/{criterio}</code></td><td>Actualizar criterio</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/criterios-proyecto/{criterio}</code></td><td>Eliminar criterio → <code>204</code></td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/proyectos/{proyecto}/calificaciones</code></td><td>Upsert calificaciones por estudiante y criterio</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/calificaciones-proyecto/{calificacion}</code></td><td>Actualizar una calificación</td></tr>
+</table>
+
+<pre>POST /api/proyectos/{proyecto}/criterios
+{
+  "criterios": [
+    { "nombre": "Creatividad", "puntaje_maximo": 5 },
+    { "nombre": "Investigación", "puntaje_maximo": 10 }
+  ]
+}
+
+POST /api/proyectos/{proyecto}/calificaciones
+{
+  "calificaciones": [
+    { "estudiante_id": 1, "criterio_id": 1, "puntaje": 4.5 },
+    { "estudiante_id": 1, "criterio_id": 2, "puntaje": 8.0 }
+  ]
+}</pre>
+
+<h3>6.10 Alertas (Legacy)</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/alertas</code></td><td>Listar alertas del usuario (ordenadas por fecha desc)</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/alertas</code></td><td>Crear alerta</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/alertas/{alerta}</code></td><td>Ver alerta con estudiante y curso</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/alertas/{alerta}/leida</code></td><td>Marcar alerta como leída</td></tr>
+  <tr><td><span class="badge badge-delete">DELETE</span></td><td><code>/api/alertas/{alerta}</code></td><td>Eliminar alerta → <code>204</code></td></tr>
+</table>
+
+<pre>POST /api/alertas
+{
+  "estudiante_id": 1,
+  "curso_id": 1,
+  "tipo": "faltas_consecutivas",
+  "descripcion": "3 faltas consecutivas",
+  "fecha": "2026-03-01"
+}</pre>
+
+<!-- ==================== 7. ENUMERADOS ==================== -->
+<h2>7. Valores de Campos Tipo Enum</h2>
+
+<table class="enum-table">
+  <tr><th>Campo</th><th>Valores</th></tr>
+  <tr><td><code>asistencia</code> (legacy)</td><td><code>presente</code>, <code>ausente</code>, <code>tardanza</code>, <code>justificado</code></td></tr>
+  <tr><td><code>attendance</code> (sync)</td><td><code>present</code>, <code>absent</code>, <code>late</code>, <code>justified</code></td></tr>
+  <tr><td><code>tipo</code> alerta (legacy)</td><td><code>faltas_consecutivas</code>, <code>bajo_rendimiento</code>, <code>baja_participacion</code>, <code>tareas_no_entregadas</code>, <code>dificultades_multiples</code></td></tr>
+  <tr><td><code>type</code> alert (sync)</td><td><code>consecutiveAbsences</code>, <code>performanceDecline</code>, <code>lowParticipation</code>, <code>missingTasks</code>, <code>multipleDifficulties</code></td></tr>
+</table>
+
+<!-- ==================== 8. EJEMPLO FLUTTER ==================== -->
+<h2>8. Ejemplo de Integración con Flutter</h2>
+
+<pre>import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class ApiClient {
+  static const baseUrl = 'https://tudominio.com/api';
+  String? _token;
+
+  Future&lt;void&gt; login(String email, String password) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+    final data = jsonDecode(res.body);
+    _token = data['token'];
+  }
+
+  Map&lt;String, String&gt; get _headers => {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $_token',
+  };
+
+  Future&lt;void&gt; syncCourses(List&lt;Map&lt;String, dynamic&gt;&gt; courses) async {
+    await http.post(
+      Uri.parse('$baseUrl/courses/sync'),
+      headers: _headers,
+      body: jsonEncode({'courses': courses}),
+    );
+  }
+
+  Future&lt;List&lt;dynamic&gt;&gt; getCourses() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/courses'),
+      headers: _headers,
+    );
+    return jsonDecode(res.body)['data'];
+  }
+
+  Future&lt;void&gt; logout() async {
+    await http.post(Uri.parse('$baseUrl/logout'), headers: _headers);
+    _token = null;
+  }
+}</pre>
+
+<!-- ==================== 9. MODELOS ==================== -->
+<h2>9. Modelos de Datos (Tablas)</h2>
+
+<table>
+  <tr><th>Tabla</th><th>Descripción</th></tr>
+  <tr><td><code>usuarios</code></td><td>Usuarios de la aplicación (id, uuid, firebase_uid, nombre, email, avatar, password)</td></tr>
+  <tr><td><code>cursos</code></td><td>Cursos creados por el usuario (configuración de puntajes máximos incluida)</td></tr>
+  <tr><td><code>estudiantes</code></td><td>Estudiantes dentro de un curso (notas en JSON)</td></tr>
+  <tr><td><code>unidades</code></td><td>Unidades dentro de un curso (ordenadas por campo orden)</td></tr>
+  <tr><td><code>sesiones</code></td><td>Sesiones de clase dentro de una unidad</td></tr>
+  <tr><td><code>registros_asistencia</code></td><td>Registro de asistencia por estudiante y sesión</td></tr>
+  <tr><td><code>tareas</code></td><td>Tareas asignadas en una unidad</td></tr>
+  <tr><td><code>calificaciones_tareas</code></td><td>Calificaciones de tareas por estudiante</td></tr>
+  <tr><td><code>practicas</code></td><td>Prácticas en una unidad</td></tr>
+  <tr><td><code>calificaciones_practicas</code></td><td>Calificaciones de prácticas por estudiante</td></tr>
+  <tr><td><code>items_participacion</code></td><td>Ítems de participación en una unidad</td></tr>
+  <tr><td><code>calificaciones_participacion</code></td><td>Calificaciones de participación por estudiante</td></tr>
+  <tr><td><code>trabajos_grupales</code></td><td>Trabajos grupales en una unidad</td></tr>
+  <tr><td><code>criterios_trabajo_grupal</code></td><td>Criterios de evaluación de un trabajo grupal</td></tr>
+  <tr><td><code>grupos</code></td><td>Grupos dentro de un trabajo grupal</td></tr>
+  <tr><td><code>integrantes_grupo</code></td><td>Tabla pivote: grupos ↔ estudiantes</td></tr>
+  <tr><td><code>puntajes_criterio_grupo</code></td><td>Puntajes del grupo por criterio</td></tr>
+  <tr><td><code>ajustes_individuales_grupo</code></td><td>Ajustes individuales de puntaje por estudiante y criterio</td></tr>
+  <tr><td><code>proyectos</code></td><td>Proyectos en una unidad</td></tr>
+  <tr><td><code>criterios_proyecto</code></td><td>Criterios de evaluación de un proyecto</td></tr>
+  <tr><td><code>calificaciones_proyecto</code></td><td>Calificaciones de proyecto por estudiante y criterio</td></tr>
+  <tr><td><code>alertas</code></td><td>Alertas generadas para el usuario</td></tr>
+</table>
+
+<footer>
+  FocusDocente API REST &mdash; Generado automáticamente desde el código fuente &mdash; 73 endpoints
+</footer>
+
+</div>
+</body>
+</html>
