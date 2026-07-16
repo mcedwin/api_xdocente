@@ -8,19 +8,21 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        //
-    }
+  /**
+   * Register any application services.
+   */
+  public function register(): void
+  {
+    //
+  }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        DB::statement("SET time_zone = '+00:00'");
+  /**
+   * Bootstrap any application services.
+   */
+  public function boot(): void
+  {
+    if (DB::connection()->getPdo()) {
+      DB::statement("SET time_zone = '+00:00'");
     }
+  }
 }
