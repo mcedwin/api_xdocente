@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    if (DB::connection()->getPdo()) {
-      DB::statement("SET time_zone = '+00:00'");
-    }
+    // if (DB::connection()->getPdo()) {
+    //   DB::statement("SET time_zone = '+00:00'");
+    // }
   }
 }
