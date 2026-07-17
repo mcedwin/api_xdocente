@@ -84,7 +84,7 @@ class CourseSyncController extends Controller
 
         $result = $cursos->map(function ($curso) {
             return $this->formatCourse($curso);
-        });
+        }); 
 
         return response()->json(['data' => $result]);
     }
