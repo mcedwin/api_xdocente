@@ -9,7 +9,7 @@ class Practica extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'practicas';
+    protected $table = 'app_practices';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

@@ -9,7 +9,7 @@ class Estudiante extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'estudiantes';
+    protected $table = 'app_students';
     protected $primaryKey = 'id';
     public $incrementing = true;
 
@@ -56,7 +56,7 @@ class Estudiante extends Model
 
     public function grupos()
     {
-        return $this->belongsToMany(Grupo::class, 'integrantes_grupo', 'estudiante_id', 'grupo_id');
+        return $this->belongsToMany(Grupo::class, 'app_group_members', 'estudiante_id', 'grupo_id');
     }
 
     public function ajustesIndividualesGrupo()

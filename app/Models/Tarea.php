@@ -9,7 +9,7 @@ class Tarea extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tareas';
+    protected $table = 'app_tasks';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

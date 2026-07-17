@@ -9,7 +9,7 @@ class RegistroAsistencia extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'registros_asistencia';
+    protected $table = 'app_attendance';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

@@ -9,7 +9,7 @@ class CriterioTrabajoGrupal extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'criterios_trabajo_grupal';
+    protected $table = 'app_group_work_criteria';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

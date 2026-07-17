@@ -9,7 +9,7 @@ class ItemParticipacion extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'items_participacion';
+    protected $table = 'app_participation_items';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

@@ -9,7 +9,7 @@ class Unidad extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'unidades';
+    protected $table = 'app_units';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

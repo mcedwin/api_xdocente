@@ -9,7 +9,7 @@ class AjusteIndividualGrupo extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'ajustes_individuales_grupo';
+    protected $table = 'app_individual_adjustments';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

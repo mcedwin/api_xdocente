@@ -9,7 +9,7 @@ class CalificacionPractica extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'calificaciones_practicas';
+    protected $table = 'app_practice_grades';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

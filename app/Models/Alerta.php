@@ -9,7 +9,7 @@ class Alerta extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'alertas';
+    protected $table = 'app_alerts';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

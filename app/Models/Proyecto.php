@@ -9,7 +9,7 @@ class Proyecto extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'proyectos';
+    protected $table = 'app_projects';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

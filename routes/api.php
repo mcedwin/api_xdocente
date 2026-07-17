@@ -2,32 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\EstudianteController;
-use App\Http\Controllers\UnidadController;
-use App\Http\Controllers\SesionController;
-use App\Http\Controllers\RegistroAsistenciaController;
-use App\Http\Controllers\TareaController;
-use App\Http\Controllers\CalificacionTareaController;
-use App\Http\Controllers\PracticaController;
-use App\Http\Controllers\CalificacionPracticaController;
-use App\Http\Controllers\ParticipacionController;
-use App\Http\Controllers\CalificacionParticipacionController;
-use App\Http\Controllers\TrabajoGrupalController;
-use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\CriterioTrabajoGrupalController;
-use App\Http\Controllers\PuntajeCriterioGrupoController;
-use App\Http\Controllers\AjusteIndividualGrupoController;
-use App\Http\Controllers\ProyectoController;
-use App\Http\Controllers\CriterioProyectoController;
-use App\Http\Controllers\CalificacionProyectoController;
-use App\Http\Controllers\AlertaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CourseSyncController;
 use App\Http\Controllers\CourseEntityController;
 use App\Http\Controllers\AlertSyncController;
 
-// ========== ENDPOINTS PÚBLICOS ==========
+// ========== ENDPOINTS PUBLICOS ==========
 
 Route::post('/send-notification', [NotificationController::class, 'send']);
 Route::post('/auth/google', [AuthController::class, 'google']);
@@ -111,105 +91,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/alerts', [AlertSyncController::class, 'index']);
     Route::post('/alerts/sync', [AlertSyncController::class, 'sync']);
     Route::put('/alerts/{id}/read', [AlertSyncController::class, 'markRead']);
-
-    // ========== ENDPOINTS LEGADO (ESPAÑOL) ==========
-
-    Route::get('/me', fn ($request) => $request->user());
-
-    Route::apiResource('cursos', CursoController::class);
-
-    Route::get('/cursos/{curso}/estudiantes', [EstudianteController::class, 'index']);
-    Route::post('/cursos/{curso}/estudiantes', [EstudianteController::class, 'store']);
-    Route::get('/estudiantes/{estudiante}', [EstudianteController::class, 'show']);
-    Route::put('/estudiantes/{estudiante}', [EstudianteController::class, 'update']);
-    Route::delete('/estudiantes/{estudiante}', [EstudianteController::class, 'destroy']);
-
-    Route::get('/cursos/{curso}/unidades', [UnidadController::class, 'index']);
-    Route::post('/cursos/{curso}/unidades', [UnidadController::class, 'store']);
-    Route::get('/unidades/{unidad}', [UnidadController::class, 'show']);
-    Route::put('/unidades/{unidad}', [UnidadController::class, 'update']);
-    Route::delete('/unidades/{unidad}', [UnidadController::class, 'destroy']);
-
-    Route::get('/unidades/{unidad}/sesiones', [SesionController::class, 'index']);
-    Route::post('/unidades/{unidad}/sesiones', [SesionController::class, 'store']);
-    Route::get('/sesiones/{sesion}', [SesionController::class, 'show']);
-    Route::put('/sesiones/{sesion}', [SesionController::class, 'update']);
-    Route::delete('/sesiones/{sesion}', [SesionController::class, 'destroy']);
-
-    Route::get('/sesiones/{sesion}/asistencia', [RegistroAsistenciaController::class, 'index']);
-    Route::post('/sesiones/{sesion}/asistencia', [RegistroAsistenciaController::class, 'store']);
-    Route::put('/asistencia/{registro}', [RegistroAsistenciaController::class, 'update']);
-    Route::delete('/asistencia/{registro}', [RegistroAsistenciaController::class, 'destroy']);
-
-    Route::get('/unidades/{unidad}/tareas', [TareaController::class, 'index']);
-    Route::post('/unidades/{unidad}/tareas', [TareaController::class, 'store']);
-    Route::get('/tareas/{tarea}', [TareaController::class, 'show']);
-    Route::put('/tareas/{tarea}', [TareaController::class, 'update']);
-    Route::delete('/tareas/{tarea}', [TareaController::class, 'destroy']);
-
-    Route::post('/tareas/{tarea}/calificaciones', [CalificacionTareaController::class, 'store']);
-    Route::put('/calificaciones-tareas/{calificacion}', [CalificacionTareaController::class, 'update']);
-
-    Route::get('/unidades/{unidad}/practicas', [PracticaController::class, 'index']);
-    Route::post('/unidades/{unidad}/practicas', [PracticaController::class, 'store']);
-    Route::get('/practicas/{practica}', [PracticaController::class, 'show']);
-    Route::put('/practicas/{practica}', [PracticaController::class, 'update']);
-    Route::delete('/practicas/{practica}', [PracticaController::class, 'destroy']);
-
-    Route::post('/practicas/{practica}/calificaciones', [CalificacionPracticaController::class, 'store']);
-    Route::put('/calificaciones-practicas/{calificacion}', [CalificacionPracticaController::class, 'update']);
-
-    Route::get('/unidades/{unidad}/participacion', [ParticipacionController::class, 'index']);
-    Route::post('/unidades/{unidad}/participacion', [ParticipacionController::class, 'store']);
-    Route::get('/participacion/{item}', [ParticipacionController::class, 'show']);
-    Route::put('/participacion/{item}', [ParticipacionController::class, 'update']);
-    Route::delete('/participacion/{item}', [ParticipacionController::class, 'destroy']);
-
-    Route::post('/participacion/{item}/calificaciones', [CalificacionParticipacionController::class, 'store']);
-    Route::put('/calificaciones-participacion/{calificacion}', [CalificacionParticipacionController::class, 'update']);
-
-    Route::get('/unidades/{unidad}/trabajos-grupales', [TrabajoGrupalController::class, 'index']);
-    Route::post('/unidades/{unidad}/trabajos-grupales', [TrabajoGrupalController::class, 'store']);
-    Route::get('/trabajos-grupales/{trabajo}', [TrabajoGrupalController::class, 'show']);
-    Route::put('/trabajos-grupales/{trabajo}', [TrabajoGrupalController::class, 'update']);
-    Route::delete('/trabajos-grupales/{trabajo}', [TrabajoGrupalController::class, 'destroy']);
-
-    Route::get('/trabajos-grupales/{trabajo}/criterios', [CriterioTrabajoGrupalController::class, 'index']);
-    Route::post('/trabajos-grupales/{trabajo}/criterios', [CriterioTrabajoGrupalController::class, 'store']);
-    Route::put('/criterios-trabajo-grupal/{criterio}', [CriterioTrabajoGrupalController::class, 'update']);
-    Route::delete('/criterios-trabajo-grupal/{criterio}', [CriterioTrabajoGrupalController::class, 'destroy']);
-
-    Route::get('/trabajos-grupales/{trabajo}/grupos', [GrupoController::class, 'index']);
-    Route::post('/trabajos-grupales/{trabajo}/grupos', [GrupoController::class, 'store']);
-    Route::get('/grupos/{grupo}', [GrupoController::class, 'show']);
-    Route::put('/grupos/{grupo}', [GrupoController::class, 'update']);
-    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy']);
-
-    Route::post('/grupos/{grupo}/puntajes', [PuntajeCriterioGrupoController::class, 'store']);
-    Route::put('/puntajes-criterio-grupo/{puntaje}', [PuntajeCriterioGrupoController::class, 'update']);
-
-    Route::get('/grupos/{grupo}/ajustes', [AjusteIndividualGrupoController::class, 'index']);
-    Route::post('/grupos/{grupo}/ajustes', [AjusteIndividualGrupoController::class, 'store']);
-    Route::put('/ajustes-individuales/{ajuste}', [AjusteIndividualGrupoController::class, 'update']);
-    Route::delete('/ajustes-individuales/{ajuste}', [AjusteIndividualGrupoController::class, 'destroy']);
-
-    Route::get('/unidades/{unidad}/proyectos', [ProyectoController::class, 'index']);
-    Route::post('/unidades/{unidad}/proyectos', [ProyectoController::class, 'store']);
-    Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show']);
-    Route::put('/proyectos/{proyecto}', [ProyectoController::class, 'update']);
-    Route::delete('/proyectos/{proyecto}', [ProyectoController::class, 'destroy']);
-
-    Route::get('/proyectos/{proyecto}/criterios', [CriterioProyectoController::class, 'index']);
-    Route::post('/proyectos/{proyecto}/criterios', [CriterioProyectoController::class, 'store']);
-    Route::put('/criterios-proyecto/{criterio}', [CriterioProyectoController::class, 'update']);
-    Route::delete('/criterios-proyecto/{criterio}', [CriterioProyectoController::class, 'destroy']);
-
-    Route::post('/proyectos/{proyecto}/calificaciones', [CalificacionProyectoController::class, 'store']);
-    Route::put('/calificaciones-proyecto/{calificacion}', [CalificacionProyectoController::class, 'update']);
-
-    Route::get('/alertas', [AlertaController::class, 'index']);
-    Route::post('/alertas', [AlertaController::class, 'store']);
-    Route::get('/alertas/{alerta}', [AlertaController::class, 'show']);
-    Route::put('/alertas/{alerta}/leida', [AlertaController::class, 'marcarLeida']);
-    Route::delete('/alertas/{alerta}', [AlertaController::class, 'destroy']);
 });

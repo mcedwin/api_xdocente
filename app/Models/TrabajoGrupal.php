@@ -9,7 +9,7 @@ class TrabajoGrupal extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'trabajos_grupales';
+    protected $table = 'app_group_works';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

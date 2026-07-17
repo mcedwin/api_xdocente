@@ -732,7 +732,7 @@ class CourseEntityController extends Controller
             foreach ($request->studentIds ?? [] as $estUuid) {
                 $est = Estudiante::where('uuid', $estUuid)->where('curso_id', $curso->id)->first();
                 if ($est) {
-                    DB::table('integrantes_grupo')->insert(['grupo_id' => $grupo->id, 'estudiante_id' => $est->id]);
+                    DB::table('app_group_members')->insert(['grupo_id' => $grupo->id, 'estudiante_id' => $est->id]);
                 }
             }
 
@@ -788,11 +788,11 @@ class CourseEntityController extends Controller
             if (!empty($data)) { $grupo->update($data); }
 
             if ($request->has('studentIds')) {
-                DB::table('integrantes_grupo')->where('grupo_id', $grupo->id)->delete();
+                DB::table('app_group_members')->where('grupo_id', $grupo->id)->delete();
                 foreach ($request->studentIds as $estUuid) {
                     $est = Estudiante::where('uuid', $estUuid)->where('curso_id', $curso->id)->first();
                     if ($est) {
-                        DB::table('integrantes_grupo')->insert(['grupo_id' => $grupo->id, 'estudiante_id' => $est->id]);
+                        DB::table('app_group_members')->insert(['grupo_id' => $grupo->id, 'estudiante_id' => $est->id]);
                     }
                 }
             }

@@ -9,7 +9,7 @@ class Curso extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'cursos';
+    protected $table = 'app_courses';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

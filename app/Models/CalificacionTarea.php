@@ -9,7 +9,7 @@ class CalificacionTarea extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'calificaciones_tareas';
+    protected $table = 'app_task_grades';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

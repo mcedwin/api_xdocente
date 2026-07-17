@@ -9,7 +9,7 @@ class PuntajeCriterioGrupo extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'puntajes_criterio_grupo';
+    protected $table = 'app_group_criterion_scores';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

@@ -9,7 +9,7 @@ class CriterioProyecto extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'criterios_proyecto';
+    protected $table = 'app_project_criteria';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

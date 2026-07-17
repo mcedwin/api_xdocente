@@ -9,7 +9,7 @@ class Sesion extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'sesiones';
+    protected $table = 'app_sessions';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

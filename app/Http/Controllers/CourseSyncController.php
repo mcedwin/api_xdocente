@@ -431,7 +431,7 @@ class CourseSyncController extends Controller
                     foreach ($gData['studentIds'] ?? [] as $estUuid) {
                         $est = Estudiante::where('uuid', $estUuid)->where('curso_id', $curso->id)->first();
                         if ($est) {
-                            DB::table('integrantes_grupo')->insert([
+                            DB::table('app_group_members')->insert([
                                 'grupo_id' => $grupo->id,
                                 'estudiante_id' => $est->id,
                             ]);
