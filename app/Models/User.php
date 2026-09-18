@@ -21,10 +21,16 @@ class User extends Authenticatable
         'email',
         'avatar',
         'password',
+        'is_admin',
+        'institucion',
     ];
 
     protected $hidden = [
         'password',
+    ];
+
+    protected $casts = [
+        'is_admin' => 'boolean',
     ];
 
     public function cursos()

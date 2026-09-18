@@ -136,6 +136,35 @@ class CourseEntityController extends Controller
         return response()->json(['ok' => true]);
     }
 
+    public function storeStudentsBulk($courseUuid, Request $request)
+    {
+        $curso = $this->findCourse($courseUuid);
+        $now = $this->now();
+        $request->validate(['students' => 'required|array', 'students.*.name' => 'required|string']);
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->students as $s) {
+                Estudiante::create([
+                    'uuid' => $s['id'] ?? Str::uuid()->toString(),
+                    'curso_id' => $curso->id,
+                    'nombre' => $s['name'],
+                    'notas' => $s['notes'] ?? null,
+                    'created_at' => $s['created_at'] ?? $now,
+                    'updated_at' => $s['updated_at'] ?? $now,
+                    'sync_status' => 'synced',
+                    'device_id' => $s['device_id'] ?? null,
+                ]);
+            }
+            DB::commit();
+            $this->touchCourse($curso);
+            return response()->json(['message' => 'ok'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     // ===================== 4.2 UNITS =====================
 
     public function storeUnit($courseUuid, Request $request)

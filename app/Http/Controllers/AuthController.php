@@ -33,6 +33,8 @@ class AuthController extends Controller
                 'name' => $user->nombre,
                 'email' => $user->email,
                 'avatar' => $user->avatar,
+                'institucion' => $user->institucion ?? '',
+                'is_admin' => (bool) ($user->is_admin ?? false),
             ],
         ]);
     }
@@ -60,6 +62,8 @@ class AuthController extends Controller
                 'name' => $user->nombre,
                 'email' => $user->email,
                 'avatar' => $user->avatar,
+                'institucion' => $user->institucion ?? '',
+                'is_admin' => (bool) ($user->is_admin ?? false),
             ],
         ], 201);
     }
@@ -80,6 +84,36 @@ class AuthController extends Controller
             'name' => $user->nombre,
             'email' => $user->email,
             'avatar' => $user->avatar,
+            'institucion' => $user->institucion ?? '',
+            'is_admin' => (bool) ($user->is_admin ?? false),
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'institucion' => 'sometimes|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $data = $request->only(['name', 'institucion']);
+
+        if (isset($data['name'])) {
+            $user->nombre = $data['name'];
+        }
+        if (array_key_exists('institucion', $data)) {
+            $user->institucion = $data['institucion'];
+        }
+        $user->save();
+
+        return response()->json([
+            'id' => $user->uuid ?? (string) $user->id,
+            'name' => $user->nombre,
+            'email' => $user->email,
+            'avatar' => $user->avatar,
+            'institucion' => $user->institucion ?? '',
+            'is_admin' => (bool) ($user->is_admin ?? false),
         ]);
     }
 
@@ -125,6 +159,8 @@ class AuthController extends Controller
                 'name' => $user->nombre,
                 'email' => $user->email,
                 'avatar' => $user->avatar,
+                'institucion' => $user->institucion ?? '',
+                'is_admin' => (bool) ($user->is_admin ?? false),
             ],
         ]);
     }

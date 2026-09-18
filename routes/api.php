@@ -6,6 +6,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CourseSyncController;
 use App\Http\Controllers\CourseEntityController;
 use App\Http\Controllers\AlertSyncController;
+use App\Http\Controllers\AdminController;
 
 // ========== ENDPOINTS PUBLICOS ==========
 
@@ -23,16 +24,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- Flutter contract: User ---
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user', [AuthController::class, 'updateProfile']);
 
     // --- Flutter contract: Courses ---
     Route::get('/courses', [CourseSyncController::class, 'index']);
     Route::post('/courses/sync', [CourseSyncController::class, 'sync']);
     Route::post('/courses', [CourseSyncController::class, 'store']);
+    Route::get('/courses/{id}', [CourseSyncController::class, 'show']);
+    Route::put('/courses/{id}', [CourseSyncController::class, 'update']);
     Route::delete('/courses/{id}', [CourseSyncController::class, 'destroy']);
 
     // --- Flutter contract: Individual entity endpoints ---
     Route::prefix('courses/{courseUuid}')->group(function () {
         // Students
+        Route::post('/students/bulk', [CourseEntityController::class, 'storeStudentsBulk']);
         Route::post('/students', [CourseEntityController::class, 'storeStudent']);
         Route::put('/students/{studentUuid}', [CourseEntityController::class, 'updateStudent']);
         Route::delete('/students/{studentUuid}', [CourseEntityController::class, 'destroyStudent']);
@@ -91,4 +96,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/alerts', [AlertSyncController::class, 'index']);
     Route::post('/alerts/sync', [AlertSyncController::class, 'sync']);
     Route::put('/alerts/{id}/read', [AlertSyncController::class, 'markRead']);
+
+    // --- Admin endpoints ---
+    Route::prefix('admin')->group(function () {
+        Route::get('/stats', [AdminController::class, 'stats']);
+        Route::get('/users', [AdminController::class, 'users']);
+        Route::get('/users/{uuid}', [AdminController::class, 'userDetail']);
+        Route::get('/users/{uuid}/courses', [AdminController::class, 'userCourses']);
+    });
 });

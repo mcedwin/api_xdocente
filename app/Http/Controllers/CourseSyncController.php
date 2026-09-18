@@ -75,10 +75,12 @@ class CourseSyncController extends Controller
 
         if ($request->has('since')) {
             $since = $request->input('since');
+            // Convert ISO 8601 (2026-07-17T15:30:00.000Z) to MySQL format (2026-07-17 15:30:00)
+            $since = str_replace(['T', 'Z'], [' ', ''], $since);
+            $since = substr($since, 0, 19); // trim milliseconds
             $query->where('updated_at', '>', $since);
-        } else {
-            $query->whereNull('deleted_at');
         }
+        $query->whereNull('deleted_at');
 
         $cursos = $query->get();
 
@@ -87,6 +89,59 @@ class CourseSyncController extends Controller
         }); 
 
         return response()->json(['data' => $result]);
+    }
+
+    public function show($id)
+    {
+        $curso = Curso::where('uuid', $id)
+            ->where('usuario_id', auth()->id())
+            ->whereNull('deleted_at')
+            ->with([
+                'estudiantes',
+                'unidades.sesiones.registrosAsistencia.estudiante',
+                'unidades.tareas.calificaciones.estudiante',
+                'unidades.practicas.calificaciones.estudiante',
+                'unidades.itemsParticipacion.calificaciones.estudiante',
+                'unidades.trabajosGrupales.criterios',
+                'unidades.trabajosGrupales.grupos.estudiantes',
+                'unidades.trabajosGrupales.grupos.puntajesCriterio.criterio',
+                'unidades.trabajosGrupales.grupos.ajustesIndividuales.estudiante',
+                'unidades.trabajosGrupales.grupos.ajustesIndividuales.criterio',
+                'unidades.proyectos.criterios',
+                'unidades.proyectos.calificaciones.estudiante',
+                'unidades.proyectos.calificaciones.criterio',
+            ])
+            ->firstOrFail();
+
+        return response()->json(['data' => $this->formatCourse($curso)]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $curso = Curso::where('uuid', $id)->where('usuario_id', auth()->id())->whereNull('deleted_at')->firstOrFail();
+        $now = $this->now();
+
+        if ($request->has('name')) {
+            $curso->nombre = $request->name;
+        }
+        if ($request->has('description')) {
+            $curso->descripcion = $request->description;
+        }
+        if ($request->has('selectedUnitIndex')) {
+            $curso->indice_unidad_seleccionada = $request->selectedUnitIndex;
+        }
+        if ($request->has('settings')) {
+            $curso->puntaje_max_tarea = $request->input('settings.maxTaskScore', $curso->puntaje_max_tarea);
+            $curso->puntaje_max_practica = $request->input('settings.maxPracticeScore', $curso->puntaje_max_practica);
+            $curso->puntaje_max_participacion = $request->input('settings.maxParticipation', $curso->puntaje_max_participacion);
+            $curso->puntaje_max_trabajo_grupal = $request->input('settings.maxGroupWorkScore', $curso->puntaje_max_trabajo_grupal);
+            $curso->puntaje_max_proyecto = $request->input('settings.maxProjectScore', $curso->puntaje_max_proyecto);
+        }
+        $curso->updated_at = $now;
+        $curso->sync_status = 'synced';
+        $curso->save();
+
+        return response()->json(['data' => $this->formatCourse($curso)]);
     }
 
     public function store(Request $request)
