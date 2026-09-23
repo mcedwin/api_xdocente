@@ -94,7 +94,11 @@ class AlertSyncController extends Controller
     public function sync(Request $request)
     {
         $request->validate([
-            'alerts' => 'required|array',
+            // `array` (sin `required`): una lista vacía es un estado legítimo
+            // (el usuario borró todos sus cursos/alertas). Con `required|array`
+            // Laravel rechaza [] con "The alerts field is required", dejando la
+            // operación del dispositivo atascada en su cola de sync.
+            'alerts' => 'array',
             'alerts.*.id' => 'required|string',
             'alerts.*.studentId' => 'required|string',
             'alerts.*.courseId' => 'required|string',
@@ -102,12 +106,13 @@ class AlertSyncController extends Controller
 
         $userId = auth()->id();
         $now = $this->now();
+        $alerts = $request->alerts ?? [];
 
         DB::beginTransaction();
         try {
             Alerta::where('usuario_id', $userId)->forceDelete();
 
-            foreach ($request->alerts as $alertData) {
+            foreach ($alerts as $alertData) {
                 $estudiante = Estudiante::where('uuid', $alertData['studentId'])->first();
                 $curso = Curso::where('uuid', $alertData['courseId'])->first();
 
