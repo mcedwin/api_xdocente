@@ -68,7 +68,7 @@ class AdminController extends Controller
     public function userCourses($uuid)
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        $courses = Curso::with(['estudiantes', 'unidades.sesiones', 'unidades.tareas', 'unidades.practicas', 'unidades.participaciones', 'unidades.trabajosGrupales', 'unidades.proyecto'])
+        $courses = Curso::with(['estudiantes', 'unidades.sesiones', 'unidades.activities'])
             ->where('usuario_id', $user->id)
             ->whereNull('deleted_at')
             ->get();
@@ -93,6 +93,11 @@ class AdminController extends Controller
                 'maxParticipation' => $course->puntaje_max_participacion,
                 'maxGroupWorkScore' => $course->puntaje_max_trabajo_grupal,
                 'maxProjectScore' => $course->puntaje_max_proyecto,
+                'pctAttendance' => $course->peso_asistencia,
+                'pctTasks' => $course->peso_tareas,
+                'pctPractices' => $course->peso_practicas,
+                'pctParticipation' => $course->peso_participacion,
+                'pctProject' => $course->peso_proyecto,
             ],
             'students' => $course->estudiantes->map(fn($s) => [
                 'uuid' => $s->uuid,
@@ -105,6 +110,7 @@ class AdminController extends Controller
 
     private function transformUnit($unit)
     {
+        $activities = $unit->activities ?? collect();
         return [
             'uuid' => $unit->uuid,
             'name' => $unit->nombre,
@@ -113,12 +119,17 @@ class AdminController extends Controller
                 'date' => $s->fecha,
                 'topic' => $s->tema,
             ]),
-            'tasks' => $unit->tareas->map(fn($t) => [
+            'tasks' => $activities->where('type', 'task')->values()->map(fn($t) => [
                 'uuid' => $t->uuid,
                 'name' => $t->nombre,
                 'date' => $t->fecha,
             ]),
-            'practices' => $unit->practicas->map(fn($p) => [
+            'practices' => $activities->where('type', 'practice')->values()->map(fn($p) => [
+                'uuid' => $p->uuid,
+                'name' => $p->nombre,
+                'date' => $p->fecha,
+            ]),
+            'projects' => $activities->where('type', 'project')->values()->map(fn($p) => [
                 'uuid' => $p->uuid,
                 'name' => $p->nombre,
                 'date' => $p->fecha,

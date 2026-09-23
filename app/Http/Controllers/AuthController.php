@@ -123,16 +123,40 @@ class AuthController extends Controller
             'id_token' => 'required|string',
         ]);
 
-        $googleResponse = \Illuminate\Support\Facades\Http::get(
-            'https://oauth2.googleapis.com/tokeninfo',
-            ['id_token' => $request->id_token]
-        );
+        try {
+            $googleResponse = \Illuminate\Support\Facades\Http::timeout(10)->get(
+                'https://oauth2.googleapis.com/tokeninfo',
+                ['id_token' => $request->id_token]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'No se pudo contactar a Google para verificar el token. Intenta de nuevo.',
+            ], 503);
+        }
 
         if (!$googleResponse->ok()) {
-            return response()->json(['error' => 'Token inválido'], 401);
+            return response()->json([
+                'message' => 'El token de Google no es válido o ya expiró.',
+            ], 401);
         }
 
         $googleUser = $googleResponse->json();
+
+        // Verificar que el token haya sido emitido para esta aplicación.
+        $expectedClientId = env('GOOGLE_CLIENT_ID');
+        $audience = $googleUser['aud'] ?? null;
+        if (!$audience || ($expectedClientId && $audience !== $expectedClientId)) {
+            return response()->json([
+                'message' => 'El token de Google no corresponde a esta aplicación.',
+            ], 401);
+        }
+
+        // Google solo garantiza que el email pertenece al usuario si email_verified es true.
+        if (empty($googleUser['email']) || empty($googleUser['email_verified'])) {
+            return response()->json([
+                'message' => 'Tu cuenta de Google no tiene un correo verificado.',
+            ], 401);
+        }
 
         $user = User::where('firebase_uid', $googleUser['sub'])->first();
 

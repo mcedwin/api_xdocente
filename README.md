@@ -57,3 +57,28 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## Esquema unificado (actividades)
+
+Desde sep 2026 la API usa un **contrato único de actividad** en `app_activities` (+ `app_activity_criteria`, `app_activity_groups`, `app_activity_group_members`, `app_activity_scores`, `app_activity_group_overrides`) que cubre tareas, prácticas, participación, trabajos grupales y proyectos a través del campo `type` (`task | practice | participation | group_work | project`).
+
+El catálogo de migraciones (ejecutado en la BD MySQL `xdocente` y registrado en `sys_migrations`) incluye:
+
+- **Tablas base:** `app_users`, `app_courses`, `app_units`, `app_sessions`, `app_students`, `app_attendance`, `app_alerts` (`2026_09_21_000000` → `000006`).
+- **Tablas de infraestructura:** `sys_cache`, `sys_jobs`, `sys_failed_jobs`, `sys_job_batches`, `sys_password_reset_tokens`, `sys_personal_access_tokens`, `sys_sessions`, `sys_cache_locks` (`000007`).
+- **Tablas unificadas de actividad** (`2026_09_21_100000` → `100005`).
+
+### Tablas legacy archivadas
+
+Las tablas duplicadas del esquema anterior se renombraron a `legacy_*` (conservan los datos históricos):
+
+- `legacy_app_tasks`, `legacy_app_task_grades`, `legacy_app_practices`, `legacy_app_practice_grades`
+- `legacy_app_participation_items`, `legacy_app_participation_grades`
+- `legacy_app_group_works`, `legacy_app_group_work_criteria`, `legacy_app_groups`, `legacy_app_group_members`, `legacy_app_group_criterion_scores`, `legacy_app_individual_adjustments`
+- `legacy_app_projects`, `legacy_app_project_criteria`, `legacy_app_project_grades`
+
+Los datos de `app_tasks`/`app_task_grades` y `app_practices` se migraron a `app_activities`/`app_activity_scores` (tipo `task` y `practice`, sin rúbrica). Las tablas `legacy_*` pueden eliminarse cuando ya no se necesiten.
+
+> Nota: el entorno de desarrollo actual no dispone de binario PHP; la aplicación del esquema y la migración de datos se realizó directamente sobre MySQL. En un entorno con PHP/Composer basta con `php artisan migrate` (las migraciones ya figuran como ejecutadas en `sys_migrations`).

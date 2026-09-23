@@ -39,28 +39,8 @@ class Unidad extends Model
         return $this->hasMany(Sesion::class, 'unidad_id');
     }
 
-    public function tareas()
+    public function activities()
     {
-        return $this->hasMany(Tarea::class, 'unidad_id');
-    }
-
-    public function practicas()
-    {
-        return $this->hasMany(Practica::class, 'unidad_id');
-    }
-
-    public function itemsParticipacion()
-    {
-        return $this->hasMany(ItemParticipacion::class, 'unidad_id');
-    }
-
-    public function trabajosGrupales()
-    {
-        return $this->hasMany(TrabajoGrupal::class, 'unidad_id');
-    }
-
-    public function proyectos()
-    {
-        return $this->hasMany(Proyecto::class, 'unidad_id');
+        return $this->hasMany(Activity::class, 'unidad_id');
     }
 }

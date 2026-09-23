@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('app_courses', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid', 36)->unique();
+            $table->unsignedBigInteger('usuario_id');
+            $table->string('nombre');
+            $table->text('descripcion')->nullable();
+            $table->integer('indice_unidad_seleccionada')->nullable()->default(0);
+            $table->decimal('puntaje_max_tarea', 5, 2)->nullable()->default(5);
+            $table->decimal('puntaje_max_practica', 5, 2)->nullable()->default(5);
+            $table->decimal('puntaje_max_participacion', 5, 2)->nullable()->default(3);
+            $table->decimal('puntaje_max_trabajo_grupal', 5, 2)->nullable()->default(20);
+            $table->decimal('puntaje_max_proyecto', 5, 2)->nullable()->default(5);
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->string('deleted_at', 30)->nullable();
+            $table->string('sync_status', 20)->default('synced');
+            $table->string('device_id', 36)->nullable();
+
+            $table->index('usuario_id');
+            $table->index('updated_at');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('app_courses');
+    }
+};

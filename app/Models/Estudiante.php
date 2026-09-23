@@ -39,36 +39,6 @@ class Estudiante extends Model
         return $this->hasMany(RegistroAsistencia::class, 'estudiante_id');
     }
 
-    public function calificacionesTareas()
-    {
-        return $this->hasMany(CalificacionTarea::class, 'estudiante_id');
-    }
-
-    public function calificacionesPracticas()
-    {
-        return $this->hasMany(CalificacionPractica::class, 'estudiante_id');
-    }
-
-    public function calificacionesParticipacion()
-    {
-        return $this->hasMany(CalificacionParticipacion::class, 'estudiante_id');
-    }
-
-    public function grupos()
-    {
-        return $this->belongsToMany(Grupo::class, 'app_group_members', 'estudiante_id', 'grupo_id');
-    }
-
-    public function ajustesIndividualesGrupo()
-    {
-        return $this->hasMany(AjusteIndividualGrupo::class, 'estudiante_id');
-    }
-
-    public function calificacionesProyecto()
-    {
-        return $this->hasMany(CalificacionProyecto::class, 'estudiante_id');
-    }
-
     public function alertas()
     {
         return $this->hasMany(Alerta::class, 'estudiante_id');
